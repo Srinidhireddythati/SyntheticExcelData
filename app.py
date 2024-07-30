@@ -10,10 +10,10 @@ def read_excel(file):
     return data
 
 # Create the Analyzer Agent
-def analyzer_agent(sample_data, openai_api_key):
+def analyzer_agent(sample_data, openai_api_key, model):
     openai.api_key = openai_api_key
     response = openai.ChatCompletion.create(
-        model="gpt-4o",
+        model=model,
         messages=[
             {
                 "role": "system",
@@ -30,11 +30,11 @@ def analyzer_agent(sample_data, openai_api_key):
     return response.choices[0].message['content']
 
 # Create the Generator Agent
-def generator_agent(analysis_result, sample_data, openai_api_key):
+def generator_agent(analysis_result, sample_data, openai_api_key, model):
     openai.api_key = openai_api_key
-    num_rows_to_generate = 6 # Fixed number of rows to generate
+    num_rows_to_generate = 6  # Fixed number of rows to generate
     response = openai.ChatCompletion.create(
-        model="gpt-4o",
+        model=model,
         messages=[
             {
                 "role": "system",
@@ -57,6 +57,13 @@ def main():
     # Input for API key
     openai_api_key = st.text_input("Enter your OpenAI API Key:", type="password")
 
+    # Dropdown for model selection
+    model = st.selectbox(
+        "Select the OpenAI model:",
+        options=["gpt-40", "gpt-4o-mini"],
+        index=0
+    )
+
     # File uploader for Excel files
     uploaded_file = st.file_uploader("Upload an Excel file", type=["xlsx", "xls"])
 
@@ -68,14 +75,14 @@ def main():
         st.write("Launching team of Agents...")
 
         # Analyze the sample data using the Analyzer Agent
-        analysis_result = analyzer_agent(sample_data_str, openai_api_key)
+        analysis_result = analyzer_agent(sample_data_str, openai_api_key, model)
         st.subheader("Analyzer Agent Output:")
         st.write(analysis_result)
 
         st.write("Generating new data...")
 
-        # Generate 5 rows of data
-        generated_data = generator_agent(analysis_result, sample_data_str, openai_api_key)
+        # Generate 6 rows of data
+        generated_data = generator_agent(analysis_result, sample_data_str, openai_api_key, model)
 
         # Convert generated data to a DataFrame
         generated_data_list = [row.split(',') for row in generated_data.strip().split('\n')]
