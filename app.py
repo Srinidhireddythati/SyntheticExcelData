@@ -32,7 +32,7 @@ def analyzer_agent(sample_data, openai_api_key):
 # Create the Generator Agent
 def generator_agent(analysis_result, sample_data, openai_api_key):
     openai.api_key = openai_api_key
-    num_rows_to_generate = 11  # Always generate 10 rows
+    num_rows_to_generate = 6 # Fixed number of rows to generate
     response = openai.ChatCompletion.create(
         model="gpt-4o",
         messages=[
@@ -74,12 +74,18 @@ def main():
 
         st.write("Generating new data...")
 
-        # Generate the same number of rows as the input data size
+        # Generate 5 rows of data
         generated_data = generator_agent(analysis_result, sample_data_str, openai_api_key)
 
         # Convert generated data to a DataFrame
         generated_data_list = [row.split(',') for row in generated_data.strip().split('\n')]
-        
+
+        # Debug: Print the raw generated data and sample data columns
+        st.write("Generated Data (Raw):")
+        st.write(generated_data_list)
+        st.write("Sample Data Columns:")
+        st.write(sample_data.columns)
+
         # Ensure the first row is treated as the header and matches the input DataFrame's columns
         generated_df = pd.DataFrame(generated_data_list[1:], columns=sample_data.columns)
 
