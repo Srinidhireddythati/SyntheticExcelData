@@ -60,7 +60,7 @@ def main():
     # Dropdown for model selection
     model = st.selectbox(
         "Select the OpenAI model:",
-        options=["gpt-40", "gpt-4o-mini"],
+        options=["gpt-4o", "gpt-4o-mini"],
         index=0
     )
 
@@ -101,7 +101,7 @@ def main():
         st.dataframe(generated_df)
 
         # Save generated data to an Excel file
-        output_file = "gpt-4o.xlsx"
+        output_file = "output.xlsx"
         generated_df.to_excel(output_file, index=False)
 
         # Create a download button for the generated Excel file
