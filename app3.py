@@ -24,7 +24,7 @@ def analyzer_agent(sample_data, openai_api_key, model):
                 "content": f"Analyze the following data:\n{sample_data}"
             }
         ],
-        max_tokens=400,
+        max_tokens=1500,  # Increased token limit for analysis
         temperature=0.1
     )
     return response.choices[0].message['content']
@@ -44,7 +44,7 @@ def generator_agent(analysis_result, sample_data, openai_api_key, model, num_row
                 "content": f"Generate {num_rows_to_generate} rows of data based on the following analysis:\n{analysis_result}\nSample data:\n{sample_data}"
             }
         ],
-        max_tokens=400,
+        max_tokens=1500,  # Increased token limit for generation
         temperature=1.0
     )
     return response.choices[0].message['content']
@@ -71,11 +71,14 @@ def main():
         sample_data = read_excel(uploaded_file)
         sample_data_str = sample_data.to_csv(index=False)
 
-        # Calculate the number of rows in the input data
-        num_input_rows = len(sample_data)
-
-        # Number of rows to generate
-        num_rows_to_generate = num_input_rows + 1
+        # Input for the number of rows to generate
+        num_rows_to_generate = st.number_input(
+            "Enter the number of rows to generate:",
+            min_value=1,
+            max_value=1000,
+            value=5,
+            step=1
+        )
 
         st.write("Launching team of Agents...")
 
